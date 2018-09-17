@@ -21,10 +21,7 @@ sex_dict = {
 }
 data[0] = data[0].map(sex_dict)
 shape = data.shape
-# normalized data with max and min
-normalized_data = data.apply(
-    lambda x: (pd.to_numeric(x) - np.min(pd.to_numeric(x))) / (np.max(pd.to_numeric(x)) - np.min(pd.to_numeric(x))))
-print(normalized_data)
+
 diss_matrix_sex = np.zeros((shape[0], shape[0]))
 diss_matrix = np.zeros((shape[0], shape[0]))
 ### do it in for loop, very very slow
@@ -37,14 +34,21 @@ diss_matrix = np.zeros((shape[0], shape[0]))
 # diss_data = diss_data.T + diss_data
 
 ### do it with broadcast, very quick
+# 转化为float
+data = data.apply(lambda x: pd.to_numeric(x))
 for i in range(shape[0]):
     print(i)
     # compute dissimilarity matrix for sex
     diss_matrix_sex[:, i] = (data[0] - data.iloc[i,0]) > 0
     # compute dissimilarity matrix for other attributes
-    diss_matrix[:, i] = np.sum(np.abs(normalized_data.iloc[:,1:] - normalized_data.iloc[i,1:].T), axis=1)
+    diss_matrix[:, i] = np.sum(np.abs(data.iloc[:,1:] - data.iloc[i,1:].T), axis=1)
+
 print(diss_matrix.shape, diss_matrix_sex.shape)
-diss_matrix = (diss_matrix_sex + diss_matrix) / 2
-diss_data = pd.DataFrame(diss_matrix)
-diss_data.to_csv('dissimilarity_matrix.csv', header=None, index=False)
-print(diss_matrix)
+diss_matrix_df = pd.DataFrame(diss_matrix)
+diss_matrix_sex_df = pd.DataFrame(diss_matrix_sex)
+# normalized data with max and min
+normalized_diss_matrix_df = diss_matrix_df.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
+dissimilarity_matrix = (diss_matrix_sex_df + normalized_diss_matrix_df) / 2
+
+dissimilarity_matrix.to_csv('dissimilarity_matrix.csv', header=None, index=False)
+print(dissimilarity_matrix)
