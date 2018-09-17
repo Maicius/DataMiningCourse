@@ -4,14 +4,13 @@ import pandas as pd
 
 ## First load data, data name: Sex,Length,Diameter,Height,Whole weight,Shucked weight,Viscera weight,Shell weight,Rings
 ## Different from the iris data set, you should download the abalone data and put it and this code file into the same directory
-dataMatrix = np.loadtxt("abalone.data.txt", delimiter=",", dtype=str)
+dataMatrix = np.loadtxt("abalone.data", delimiter=",", dtype=str)
 print("Here is data matrix : ")
 print("##########################################################")
 print(dataMatrix)
 data = pd.DataFrame(dataMatrix)
 i = 0
-sex_set = set(data[0])
-sex_dict = map(lambda x:dict(x=i+1), sex_set)
+
 sex_dict = {
     'M': 1,
     'F': 2,
@@ -41,5 +40,5 @@ for i in range(shape[0]):
 ## Make dissimilarity matrix using Proximity Measures for sex, and Normalized Manhattand distance for other attributes.
 # THis is your exercise !!
 diss_data = pd.DataFrame(diss_matrix)
-diss_data.to_csv('dissimilarity_data_10.csv', header=None, index=False)
+diss_data.to_csv('dissimilarity_matrix.csv', header=None, index=False)
 print(diss_matrix)
