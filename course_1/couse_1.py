@@ -4,7 +4,7 @@ import pandas as pd
 
 ## First load data, data name: Sex,Length,Diameter,Height,Whole weight,Shucked weight,Viscera weight,Shell weight,Rings
 ## Different from the iris data set, you should download the abalone data and put it and this code file into the same directory
-dataMatrix = np.loadtxt("abalone.data", delimiter=",", dtype=str)
+dataMatrix = np.loadtxt("course_1/abalone.data", delimiter=",", dtype=str)
 print("Here is data matrix : ")
 print("##########################################################")
 print(dataMatrix)
@@ -13,8 +13,8 @@ i = 0
 
 sex_dict = {
     'M': 1,
-    'F': 2,
-    'I': 3
+    'I': 2,
+    'F': 3
 }
 data[0] = data[0].map(sex_dict)
 shape = data.shape
