@@ -9,6 +9,9 @@ print("Here is data matrix : ")
 print("##########################################################")
 print(dataMatrix)
 data = pd.DataFrame(dataMatrix)
+i = 0
+sex_set = set(data[0])
+sex_dict = map(lambda x:dict(x=i+1), sex_set)
 sex_dict = {
     'M': 1,
     'F': 2,
@@ -20,7 +23,7 @@ shape = data.shape
 normalized_data = data.apply(
     lambda x: (pd.to_numeric(x) - np.min(pd.to_numeric(x))) / (np.max(pd.to_numeric(x)) - np.min(pd.to_numeric(x))))
 print(normalized_data)
-diss_martix = np.zeros((shape[0], shape[0]))
+diss_matrix = np.zeros((shape[0], shape[0]))
 
 ### do it in for loop, very very slow
 
@@ -31,12 +34,12 @@ diss_martix = np.zeros((shape[0], shape[0]))
 # diss_data = pd.DataFrame(diss_martix)
 # diss_data = diss_data.T + diss_data
 
-### do it with broadcast
+### do it with broadcast, very quick
 for i in range(shape[0]):
     print(i)
-    diss_martix[:, i] = np.sum(np.abs(normalized_data - normalized_data.iloc[i,:].T), axis=1)
+    diss_matrix[:, i] = np.sum(np.abs(normalized_data - normalized_data.iloc[i,:].T), axis=1)
 ## Make dissimilarity matrix using Proximity Measures for sex, and Normalized Manhattand distance for other attributes.
 # THis is your exercise !!
-diss_data = pd.DataFrame(diss_martix)
+diss_data = pd.DataFrame(diss_matrix)
 diss_data.to_csv('dissimilarity_data_10.csv', header=None, index=False)
-print(diss_martix)
+print(diss_matrix)
