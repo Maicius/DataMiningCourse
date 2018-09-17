@@ -37,16 +37,17 @@ diss_matrix = np.zeros((shape[0], shape[0]))
 # change str to float
 data = data.apply(lambda x: pd.to_numeric(x))
 # normalized data with max and min
-data = data.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
+# data = data.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x)))
 for i in range(shape[0]):
     print(i)
     # compute dissimilarity matrix for sex
-    diss_matrix_sex[:, i] = np.abs(data[0] - data.iloc[i,0]) > 0
+    diss_matrix_sex[i:, i] = np.abs(data.iloc[i:,0] - data.iloc[i,0]) > 0
     # compute dissimilarity matrix for other attributes
-    diss_matrix[:, i] = np.sum(np.abs(data.iloc[:,1:] - data.iloc[i,1:].T), axis=1)
+    temp = pd.DataFrame(np.sum(np.abs(data.iloc[i:,1:] - data.iloc[i,1:].T), axis=1))
+    diss_matrix[i:, i] = temp.apply(lambda x: (x - np.min(x)) / (np.max(x) - np.min(x))).values.reshape(-1,)
 
 print(diss_matrix.shape, diss_matrix_sex.shape)
 dissimilarity_matrix = (diss_matrix_sex + diss_matrix) / 2
 dissimilarity_matrix_df = pd.DataFrame(dissimilarity_matrix)
-dissimilarity_matrix_df.to_csv('dissimilarity_matrix.csv', header=None, index=False)
+dissimilarity_matrix_df.to_csv('dissimilarity_matrix_half.csv', header=None, index=False)
 print(dissimilarity_matrix)
