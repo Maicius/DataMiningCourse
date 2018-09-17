@@ -39,9 +39,9 @@ diss_matrix = np.zeros((shape[0], shape[0]))
 ### do it with broadcast, very quick
 for i in range(shape[0]):
     print(i)
-    # compute disssimilary matrix for sex
+    # compute dissimilarity matrix for sex
     diss_matrix_sex[:, i] = (data[0] - data.iloc[i,0]) > 0
-    # compute disssimilary matrix for other attributes
+    # compute dissimilarity matrix for other attributes
     diss_matrix[:, i] = np.sum(np.abs(normalized_data.iloc[:,1:] - normalized_data.iloc[i,1:].T), axis=1)
 print(diss_matrix.shape, diss_matrix_sex.shape)
 diss_matrix = (diss_matrix_sex + diss_matrix) / 2
