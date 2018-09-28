@@ -1,13 +1,7 @@
 import pandas as pd
 from sklearn import datasets
 import numpy as np
-from sklearn.cross_validation import train_test_split
-from sklearn.preprocessing import StandardScaler
-from matplotlib.colors import ListedColormap
-import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.tree import export_graphviz
+
 
 debug = False
 
@@ -16,6 +10,12 @@ X = iris.data[:, [2, 3]]
 y = iris.target
 
 def calculate_gain_split_for_discrect(X, y):
+    """
+    计算离散值的信息增益
+    :param X:
+    :param y:
+    :return:
+    """
     X = X.reshape(-1,1)
     targets = pd.unique(y)
     info_d = calculate_expect_info(y)
@@ -27,7 +27,8 @@ def calculate_gain_split_for_discrect(X, y):
     for i in range(X.shape[1]):
         data_i = X[:,i]
         type_i = pd.unique(data_i)
-        print(type_i)
+        if debug:
+            print(type_i)
         Info_i = 0
         for type in type_i:
             data_type = data_i[data_i == type]
@@ -45,8 +46,11 @@ def calculate_gain_split_for_discrect(X, y):
             Info_i += (type_i_total / total_num) * info_i
         gain_i = info_d - Info_i
         gain_list.append(gain_i)
-    # print('gain_list:', gain_list)
     return gain_list
+
+def calculate_gain_ratio():
+
+    pass
 
 
 def calculate_expect_info(y):
@@ -56,7 +60,6 @@ def calculate_expect_info(y):
     :return:
     """
     targets = pd.unique(y)
-    print(targets)
     info_d = 0
     total_num = y.size
     for target in targets:
@@ -68,7 +71,7 @@ def calculate_expect_info(y):
 
 def calculate_gain_split_for_continue(X, y):
     """
-
+    计算连续值的信息增益
     :param X:
     :param y:
     :return: X中每个属性信息增益
@@ -83,17 +86,17 @@ def calculate_gain_split_for_continue(X, y):
             split_line = (data[j, i] + data[j + 1, i]) / 2
             discrect_data_x = data[:, i] >= split_line
             expect_info = calculate_expect_info(discrect_data_x)
-            print(expect_info, split_line)
+            if debug:
+                print(expect_info, split_line)
             expect_info_list[i].append((expect_info, split_line))
     best_gain = []
     for i in range(len(expect_info_list)):
-        best_split = max(expect_info_list[i], key= lambda x: x[0])[1]
+        best_split = min(expect_info_list[i], key= lambda x: x[0])[1]
         discrect_data_x = X[:, i] >= best_split
         gain = calculate_gain_split_for_discrect(discrect_data_x, y)[0]
         best_gain.append(gain)
-    print(best_gain)
+    print("X属性的最佳信息增益:", best_gain)
     return best_gain
-
 
 print(X.shape, y.shape)
 calculate_gain_split_for_continue(X, y)
